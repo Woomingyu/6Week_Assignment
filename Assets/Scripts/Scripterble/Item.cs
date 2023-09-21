@@ -10,9 +10,14 @@ public class Item : ScriptableObject // 게임 오브젝트에 붙일 필요없는 스크립트
 
     public string itemName; // 아이템 이름
     public int itemWeight;
+    public int itemAttackDamage;
+    public int itemDefense;
+    public int itemHealth;
+    public int itemCritical;
+
+
     public ItemType itemType;
     public Sprite itemImage; // 아이템 이미지 = 인벤토리 이미지용 
-    public GameObject itemPrefab; // 아이템 프리팹(월드의 아이템 드랍 실체용)
     public float itemCost; 
     public float itemBuyCost;
 

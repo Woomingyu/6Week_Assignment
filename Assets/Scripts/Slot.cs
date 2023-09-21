@@ -20,26 +20,15 @@ public class Slot : MonoBehaviour, IPointerClickHandler, IBeginDragHandler, IDra
     private float minClickTime = 1; // 최소 클릭시간
     private bool isClick; // 클릭 중인지 판단 
 
-
-
+    private bool equipItem = false;
+    public GameObject equipItemSym;
 
     [SerializeField]
     private Inventory inventory;
 
 
-    //슬롯 아이템 개수와 개수를 감싸는 이미지
-    [SerializeField]
-    private TextMeshProUGUI text_Count;
-    [SerializeField]
-    private GameObject go_CountImage;
 
 
-
-    //인벤토리와 퀵슬롯
-    [SerializeField]
-    private RectTransform baseRect; // 인벤토리 UI의 범위
-    [SerializeField]
-    private RectTransform quickSlotBaseRect; // 퀵슬롯 UI 의 범위
 
     //플레이어 정보
     [SerializeField]
@@ -83,44 +72,17 @@ public class Slot : MonoBehaviour, IPointerClickHandler, IBeginDragHandler, IDra
         item = _item; // 정보
         itemCount = _count; // 개수
         itemImage.sprite = item.itemImage; //아이템 이미지
-
-        if (item.itemType != Item.ItemType.Equipment) //아이템 타입이 "장비" 가 아닌경우만 개수표기
-        {
-            go_CountImage.SetActive(true);
-            text_Count.text = itemCount.ToString();
-
-        }
-        else //장비 아이템
-        {
-            text_Count.text = "0";
-            go_CountImage.SetActive(false);
-
-        }
-
-
         SetColor(1);
 
     }
 
-    //인벤토리 내 아이템 개수 조절
-    public void SetSlotCount(int _count)
-    {
-        itemCount += _count; //개수를 더하거나 깎을 수 있음
-        text_Count.text = itemCount.ToString();
-        if (itemCount <= 0) // 아이템이 없어진경우
-            ClearSlot();
-    }
 
     //슬롯 비우기(초기화)
     private void ClearSlot()
     {
         item = null;
-        itemCount = 0;
         itemImage.sprite = null;
         SetColor(0);
-
-        text_Count.text = "0";
-        go_CountImage.SetActive(false);
     }
 
     //슬롯 클릭 & 아이템 착용, 해제
@@ -128,24 +90,41 @@ public class Slot : MonoBehaviour, IPointerClickHandler, IBeginDragHandler, IDra
     {
         if (eventData.button == PointerEventData.InputButton.Left)
         {
-                if (item != null)
+            if (item != null)
+            {
+                if (item.itemType == Item.ItemType.Equipment) //아이템 타입 = 장비 //if문 보다는 함수를 나눠서 호출
                 {
-                    if (item.itemType == Item.ItemType.Used)
+                    if (!equipItem) //아이템 착용 (키값으로 배열화)
                     {
-                        player.ChangeInfo(8, -item.itemWeight); //아이템 착용시 해당 아이템 무게 제거
-
-                        //player.canPickUp = true;
+                        player.ChangeInfo("weight", -item.itemWeight); //아이템 착용시 해당 아이템 무게 제거
+                        player.ChangeInfo("attackDamage", item.itemAttackDamage);
+                        player.ChangeInfo("defense", item.itemWeight);
+                        player.ChangeInfo("health", item.itemHealth);
+                        player.ChangeInfo("critical", item.itemCritical);
+                        equipItemSym.SetActive(true);
+                        equipItem = true;
+                    }
+                    else // 해제
+                    {
+                        player.ChangeInfo("weight", item.itemWeight); //무게 추가
+                        player.ChangeInfo("attackDamage", -item.itemAttackDamage);
+                        player.ChangeInfo("defense", -item.itemWeight);
+                        player.ChangeInfo("health", -item.itemHealth);
+                        player.ChangeInfo("critical", -item.itemCritical);
+                        equipItemSym.SetActive(false);
+                        equipItem = false;
                     }
                 }
-            
+            }
         }
     }
-
     //슬롯 드래그 시작
     public void OnBeginDrag(PointerEventData eventData)
     {
+        Debug.Log("드래그");
         if (item != null)
         {
+            Debug.Log("드래그 if 통과");
             DragSlot.instance.dragSlot = this; // 드래그 슬롯이 슬롯이 됨
             DragSlot.instance.DragSetImage(itemImage); // 드래그 중인 이미지도 넣어줌
             DragSlot.instance.transform.position = eventData.position;
@@ -197,7 +176,7 @@ public class Slot : MonoBehaviour, IPointerClickHandler, IBeginDragHandler, IDra
         }
         else //교체 당하는 슬롯이 비었다면
         {
-            //교체하는 슬롯 초기화
+            //기존 슬롯 초기화
             DragSlot.instance.dragSlot.ClearSlot();
         }
     }
@@ -231,14 +210,5 @@ public class Slot : MonoBehaviour, IPointerClickHandler, IBeginDragHandler, IDra
             //theItemEffectDatabase.ShowToolTip(item, transform.position);
         }
     }
-
-    /*
-    private void SellActive()
-    {
-        isSell = true;
-        chkSell.SetActive(true);
-    }
-    */
-
 
 }

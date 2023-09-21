@@ -13,16 +13,17 @@ public class DragSlot : MonoBehaviour
 
 
     // 아이템 이미지
-    [SerializeField]
     private Image imageItem;
 
     private void Start()
     {
         instance = this; //인스턴스에 자기자신 넣어주기
+        imageItem = GetComponent<Image>();
     }
 
     public void DragSetImage(Image _itemImage)
     {
+        Debug.Log("이미지 변경 호출됨");
         imageItem.sprite = _itemImage.sprite;
         SetColor(1);
     }
