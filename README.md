@@ -1,6 +1,6 @@
 # 6Week_Assignment
 
-# 스파르타 던전 - Unity  버전
+# 선택 : 스파르타 던전 - Unity  버전
 
 
 ## 1.필수 요구사항 구현 완료  
