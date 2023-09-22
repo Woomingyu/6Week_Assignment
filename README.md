@@ -1,5 +1,8 @@
 # 6Week_Assignment
 
+#스파르타 던전 - Unity  버전
+
+
 ## 1.필수 요구사항 구현 완료  
 1)메인 화면 구성 : 플레이어 정보, Status & Inventory 버튼  
 2)각 버튼 구현 완료 (토글 버튼)  
